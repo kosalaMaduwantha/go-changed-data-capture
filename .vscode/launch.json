@@ -10,8 +10,11 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}",
-            "env": {},
+            "program": "${workspaceFolder}/cmd/main.go",
+            "env": {
+                "INPUT_FILE_PATH":"/home/kosala/git-repos/go-changed-data-capture/files/input.txt",
+                "CONFIG_FILE_PATH":"/home/kosala/git-repos/go-changed-data-capture/files/hashStore.json"
+            },
             "args": [],
             "showLog": true
         }

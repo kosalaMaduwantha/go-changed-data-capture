@@ -56,7 +56,7 @@ func ReadFileContentLineByLine(filePath string, startLine int) ([]string, int) {
 	lineNumber := 1
 	for scanner.Scan() {
 		if lineNumber > startLine {
-			fileContent = append(fileContent, scanner.Text() + "\n")
+			fileContent = append(fileContent, scanner.Text())
 		}
 		lineNumber++
 	}

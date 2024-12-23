@@ -9,7 +9,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file", err)
 	}
 	domain.Cdc_run()
 }
