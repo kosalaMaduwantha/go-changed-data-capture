@@ -44,22 +44,31 @@ func ReadFileContent(filePath string) []byte {
 	return fileContent
 }
 
-func ReadFileContentLineByLine(filePath string, startLine int) ([]string, int) {
+func ReadFileContentLineByLine(filePath string, startLine int, lenPrevLine int) ([]string, int, int) {
 	file := ReadFile(filePath)
 	if file == nil {
 		logger.Error("Error while reading the file")
-		return nil, 0
+		return nil, 0, 0
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 	var fileContent []string
 	lineNumber := 1
 	for scanner.Scan() {
+		line := scanner.Text()
+		if lineNumber == startLine {
+			if len(line) != lenPrevLine {
+				fileContent = append(fileContent, line)
+				lenPrevLine = len(line)
+				lineNumber++
+				continue
+			}
+		}
 		if lineNumber > startLine {
-			fileContent = append(fileContent, scanner.Text())
+			fileContent = append(fileContent, line)
 		}
 		lineNumber++
 	}
 	currentLineNo := lineNumber -1
-	return fileContent, currentLineNo
+	return fileContent, currentLineNo, lenPrevLine
 }

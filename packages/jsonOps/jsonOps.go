@@ -13,13 +13,15 @@ type FileS struct {
 	FileName string `json:"file_name,omitempty"`
 	FileHash string `json:"file_hash,omitempty"`
 	LineCount int `json:"line_count,omitempty"`
+	LenPrevLine int `json:"len_prev_line,omitempty"`
 }
 
-func JsonSerializeFileHashData(fileHash string, fileName string, lineCount int) []byte {
+func JsonSerializeFileHashData(fileHash string, fileName string, lineCount int, lenPrevLine int) []byte {
 	fileStruct:= FileS{
 		FileName: strings.TrimSpace(fileName),
 		FileHash: strings.TrimSpace(fileHash),
 		LineCount: lineCount,
+		LenPrevLine: lenPrevLine,
 	}
 	// encoding to json data
 	jsonData, err := json.Marshal(fileStruct)
