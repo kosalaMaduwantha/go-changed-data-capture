@@ -6,6 +6,7 @@ import (
 	"cdc-file-processor/packages/jsonOps"
 	"os"
 	"time"
+
 	"github.com/gofrs/flock"
 	"github.com/sirupsen/logrus"
 )
@@ -23,15 +24,15 @@ func Cdc_run() {
 	for {
 		// Try to lock the file before reading it
 		locked, err := fileLock.TryLock()
-        if err != nil {
-            logger.Error("Error while trying to lock the file")
-            continue
-        }
-        if !locked {
-            logger.Info("File is currently being written to, retrying...")
-            time.Sleep(1 * time.Second)
-            continue
-        }
+		if err != nil {
+			logger.Error("Error while trying to lock the file")
+			continue
+		}
+		if !locked {
+			logger.Info("File is currently being written to, retrying...")
+			time.Sleep(1 * time.Second)
+			continue
+		}
 
 		newFileHash := hashOps.HashFile(inputFilePath)
 		configFileContent := fileOps.ReadFileContent(configFilePath)
@@ -39,7 +40,7 @@ func Cdc_run() {
 
 		if len(configFileContent) == 0 {
 			jsonData := jsonOps.JsonSerializeFileHashData(
-				newFileHash, configFilePath, 0)
+				newFileHash, configFilePath, 0, 0)
 			fileOps.FileWriter(configFilePath, jsonData)
 			fileLock.Unlock()
 			continue
@@ -50,13 +51,18 @@ func Cdc_run() {
 			logger.Info("File is changed")
 
 			lineCount := configFileData.LineCount
-			fileContent, currentLineNo := fileOps.ReadFileContentLineByLine(
-				inputFilePath, lineCount)
+			fileContent, currentLineNo, lenPrevLine := fileOps.ReadFileContentLineByLine(
+				inputFilePath,
+				lineCount,
+				configFileData.LenPrevLine)
 
 			jsonData := jsonOps.JsonSerializeFileHashData(
-				newFileHash, configFilePath, currentLineNo)
-			fileOps.FileWriter(configFilePath, jsonData)
+				newFileHash,
+				configFilePath,
+				currentLineNo,
+				lenPrevLine)
 
+			fileOps.FileWriter(configFilePath, jsonData)
 			if len(fileContent) == 0 {
 				logger.Info("No new lines added")
 				fileLock.Unlock()
