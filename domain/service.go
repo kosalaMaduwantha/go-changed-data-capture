@@ -1,4 +1,4 @@
-package main
+package domain
 
 import (
 	"cdc-file-processor/packages/fileOps"
@@ -9,27 +9,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func isFileChanged(inputFilePath string, configFilePath string) bool {
-	newHashValue := hashOps.HashFile(inputFilePath)
-	fileContent := fileOps.ReadFileContent(configFilePath)
-	fileHash := jsonOps.JsonDeserializeFileHashData(fileContent).FileHash
-	return newHashValue != fileHash
-}
 
-func main() {
+func Cdc_run() {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	const inputFilePath string = "files/input.txt"
-	const configFilePath string = "files/hashStore.json"
+	const inputFilePath string = "../files/input.txt"
+	const configFilePath string = "../files/hashStore.json"
+
 	for {
-		if isFileChanged(inputFilePath, configFilePath) {
+		newFileHash := hashOps.HashFile(inputFilePath)
+		fileContent := fileOps.ReadFileContent(configFilePath)
+		hashData := jsonOps.JsonDeserializeFileHashData(fileContent)
+
+		if newFileHash != hashData.FileHash {
 			logger.Info("File is changed")
 
-			hashDataStore := jsonOps.JsonDeserializeFileHashData(
-				fileOps.ReadFileContent(configFilePath))
-			lineCount := hashDataStore.LineCount
+			lineCount := hashData.LineCount
 			if lineCount == 0 {
 				lineCount = 1
 			}
@@ -37,7 +34,6 @@ func main() {
 			fileContent, currentLineNo := fileOps.ReadFileContentLineByLine(
 				inputFilePath, lineCount)
 
-			newFileHash := hashOps.HashFile(inputFilePath)
 			jsonData := jsonOps.JsonSerializeFileHashData(
 				newFileHash, configFilePath, currentLineNo)
 			fileOps.FileWriter(configFilePath, jsonData)
