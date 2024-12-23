@@ -5,7 +5,7 @@ import (
 	"cdc-file-processor/packages/hashOps"
 	"cdc-file-processor/packages/jsonOps"
 	"time"
-
+	"os"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,8 +15,8 @@ func Cdc_run() {
 	logger.SetLevel(logrus.InfoLevel)
 	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	const inputFilePath string = "../files/input.txt"
-	const configFilePath string = "../files/hashStore.json"
+	var inputFilePath string = os.Getenv("INPUT_FILE_PATH")
+	var configFilePath string = os.Getenv("CONFIG_FILE_PATH")
 
 	for {
 		newFileHash := hashOps.HashFile(inputFilePath)
