@@ -6,7 +6,6 @@ import (
 	"cdc-file-processor/packages/jsonOps"
 	"os"
 	"time"
-
 	"github.com/gofrs/flock"
 	"github.com/sirupsen/logrus"
 )
