@@ -4,17 +4,26 @@ import (
 	"cdc-file-processor/packages/fileOps"
 	"cdc-file-processor/packages/hashOps"
 	"cdc-file-processor/packages/jsonOps"
+	"cdc-file-processor/adapters/rabitMqAdapter"
 	"os"
 	"time"
-
 	"github.com/gofrs/flock"
 	"github.com/sirupsen/logrus"
+
 )
 
 func Cdc_run() {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)
 	logger.SetFormatter(&logrus.JSONFormatter{})
+	queueService := rabitMqAdapter.NewRabbitMqAdapter()
+
+	// Close the queue connection when the function ends
+	defer func() {
+        if err := queueService.(*rabitMqAdapter.RabbitMqAdapter).Close(); err != nil {
+            logger.Error("Failed to close queue connection:", err)
+        }
+    }()
 
 	var inputFilePath string = os.Getenv("INPUT_FILE_PATH")
 	var configFilePath string = os.Getenv("CONFIG_FILE_PATH")
@@ -70,6 +79,7 @@ func Cdc_run() {
 			}
 			for i := 0; i < len(fileContent); i++ {
 				logger.Info(fileContent[i])
+				queueService.SendMessage(fileContent[i], "cdc")
 			}
 
 		} else {
@@ -78,4 +88,6 @@ func Cdc_run() {
 		fileLock.Unlock()
 		time.Sleep(5 * time.Second)
 	}
+
+	
 }
