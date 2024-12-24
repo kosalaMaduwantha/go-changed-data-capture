@@ -119,8 +119,11 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="6bQlUEMZ5JdSxxlc4bhK-40" value="push data to destination" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;rounded=1;" vertex="1" parent="1">
+        <mxCell id="6bQlUEMZ5JdSxxlc4bhK-40" value="push data to destination (queue)" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;rounded=1;" vertex="1" parent="1">
           <mxGeometry x="280" y="1110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6bQlUEMZ5JdSxxlc4bhK-43" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;push data to dest&lt;/font&gt;" style="html=1;dashed=0;whiteSpace=wrap;shape=mxgraph.dfd.start" vertex="1" parent="1">
+          <mxGeometry x="1030" y="20" width="80" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
